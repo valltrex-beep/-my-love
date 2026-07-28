@@ -75,6 +75,16 @@
   /* ---------- SCROLL REVEAL ---------- */
   .reveal{opacity:0;transform:translateY(26px);transition:opacity .85s ease, transform .85s ease;}
   .reveal.in-view{opacity:1;transform:none;}
+  .chart-box.reveal.in-view,
+  .letter-card.reveal.in-view,
+  .trait-card.reveal.in-view{animation:card-glow 1.6s ease .1s;}
+  @keyframes card-glow{
+    0%{box-shadow:0 0 0 rgba(138,160,240,0);}
+    35%{box-shadow:0 0 32px rgba(138,160,240,.28);}
+    100%{box-shadow:0 0 0 rgba(138,160,240,0);}
+  }
+  .tilt{transition:transform .25s ease, box-shadow .35s ease;}
+  .tilt:hover{box-shadow:0 12px 40px rgba(138,160,240,.14);}
   .trait-card.reveal:nth-child(1){transition-delay:.05s;}
   .trait-card.reveal:nth-child(2){transition-delay:.15s;}
   .trait-card.reveal:nth-child(3){transition-delay:.25s;}
@@ -98,7 +108,13 @@
   .hero-content{
     position:relative;z-index:2;text-align:center;padding:0 1.5rem;max-width:640px;
     margin-top:auto;
+    opacity:0;
+    transform:translateY(18px) scale(.97);
+    animation:hero-in 1.6s cubic-bezier(.2,.8,.2,1) .35s forwards;
   }
+  @keyframes hero-in{to{opacity:1;transform:translateY(0) scale(1);}}
+  #bg-canvas{opacity:0;animation:canvas-in 2.4s ease .1s forwards;}
+  @keyframes canvas-in{to{opacity:1;}}
   .hero .eyebrow{margin-bottom:.9rem;}
   .hero h1{
     font-size:clamp(1.7rem,4.4vw,2.6rem);
@@ -134,7 +150,7 @@
   .wrap{max-width:960px;margin:0 auto;padding:6.5rem 1.5rem;}
 
   /* ---------- LETTER ---------- */
-  .letter-section{background:linear-gradient(180deg, rgba(5,7,15,.88) 0%, rgba(10,17,40,.93) 100%);}
+  .letter-section{background:transparent;}
   .letter-grid{
     display:grid;
     grid-template-columns:220px 1fr;
@@ -150,6 +166,7 @@
   .chart-box svg{width:100%;height:auto;display:block;margin-bottom:1rem;}
   .chart-label{font-family:'Cairo',sans-serif;font-size:.75rem;color:var(--muted);line-height:1.8;text-align:center;}
   .chart-label b{color:var(--periwinkle);font-weight:500;}
+  .letter-card{background:transparent;border:none;padding:0;}
   .letter-card h2{
     font-family:'Rakkas',serif;
     font-size:clamp(1.7rem,3.4vw,2.3rem);
@@ -173,7 +190,7 @@
     .chart-box{max-width:220px;margin:0 auto;}
   }
 
-  /* ---------- TRAITS (GEMS) ---------- */
+  /* ---------- TRAITS (ICONS) ---------- */
   .traits-section{background:rgba(10,17,40,.94);}
   .traits-section .head{text-align:center;margin-bottom:3.4rem;}
   .traits-section h2{font-family:'Rakkas',serif;color:var(--starlight);font-size:clamp(1.6rem,3.2vw,2.1rem);margin-top:.5rem;}
@@ -192,21 +209,36 @@
   }
   .trait-card h3{font-family:'Cairo',sans-serif;font-weight:500;font-size:1.02rem;color:var(--starlight);}
   .trait-card p{font-size:.9rem;color:var(--muted);line-height:1.9;}
-  .gem-stage{width:64px;height:64px;perspective:300px;display:flex;align-items:center;justify-content:center;}
-  .gem{
-    width:38px;height:38px;
-    clip-path:polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-    transform-style:preserve-3d;
-    animation:gemspin 7s ease-in-out infinite;
+
+  .icon-stage{
+    width:64px;height:64px;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
   }
-  @keyframes gemspin{
-    0%,100%{transform:rotateY(-18deg) rotateX(8deg);}
-    50%{transform:rotateY(18deg) rotateX(-6deg);}
+  .icon-stage::before{
+    content:'';
+    position:absolute;inset:0;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(138,160,240,.22), transparent 72%);
+    animation:icon-pulse 3.4s ease-in-out infinite;
   }
-  .gem.c1{background:linear-gradient(160deg,#c9d5ff 0%, var(--periwinkle) 55%, #3d4a8f 100%);}
-  .gem.c2{background:linear-gradient(160deg,#ffe6c9 0%, var(--ember) 55%, #8a5f34 100%);}
-  .gem.c3{background:linear-gradient(160deg,#d7ffe9 0%, #7fd6a8 55%, #33684a 100%);}
-  .gem.c4{background:linear-gradient(160deg,#ffd7ec 0%, #d68fc0 55%, #6b3a5b 100%);}
+  @keyframes icon-pulse{
+    0%,100%{opacity:.55; transform:scale(.92);}
+    50%{opacity:1; transform:scale(1.06);}
+  }
+  .trait-icon{
+    width:34px;height:34px;
+    position:relative;z-index:1;
+    overflow:visible;
+    animation:icon-float 5s ease-in-out infinite;
+  }
+  .trait-card:nth-child(2) .trait-icon{animation-delay:.3s;}
+  .trait-card:nth-child(3) .trait-icon{animation-delay:.6s;}
+  .trait-card:nth-child(4) .trait-icon{animation-delay:.9s;}
+  @keyframes icon-float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-4px);}
+  }
 
   /* ---------- FOOTER ---------- */
   footer{background:rgba(5,7,15,.95);text-align:center;padding:4.2rem 1.5rem 3.6rem;}
@@ -250,7 +282,7 @@
         </svg>
         <p class="chart-label">المسافة بيناتنا<br><b>حوالي ٤٬٢٠٠ كم</b><br>وما تدير والو قدام الشوق اللي في قلبي</p>
       </div>
-      <div class="letter-card reveal tilt">
+      <div class="letter-card reveal">
         <span class="eyebrow">مكتوب ليكِ</span>
         <h2 style="margin-top:.6rem;">حنونتي</h2>
         <p>زينة ديالي، علابالي هذا أبسط حاجة نقدر نديرها لك، تستاهلي كثر من هاك.</p>
@@ -271,22 +303,41 @@
     </div>
     <div class="traits-grid">
       <div class="trait-card reveal tilt">
-        <div class="gem-stage"><div class="gem c1"></div></div>
+        <div class="icon-stage">
+          <svg class="trait-icon" viewBox="0 0 34 34" fill="none">
+            <circle cx="17" cy="17" r="13.5" stroke="#8aa0f0" stroke-width="1.3"/>
+            <path d="M10.5 18.5c1.6 3 4 4.5 6.5 4.5s4.9-1.5 6.5-4.5" stroke="#e8b98a" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="12.5" cy="13.5" r="1.3" fill="#8aa0f0"/>
+            <circle cx="21.5" cy="13.5" r="1.3" fill="#8aa0f0"/>
+          </svg>
+        </div>
         <h3>ضحكتكِ</h3>
         <p>تكفي ثانية وحدة من ضحكتك باش نهار يتبدل كامل ويرجع شباب.</p>
       </div>
       <div class="trait-card reveal tilt">
-        <div class="gem-stage"><div class="gem c2"></div></div>
+        <div class="icon-stage">
+          <svg class="trait-icon" viewBox="0 0 34 34" fill="none">
+            <path d="M17 25.5c-.3 0-.6-.1-.8-.3-3.9-3-8.6-6.9-8.6-11.6 0-2.9 2.3-5.2 5.2-5.2 1.7 0 3.3.8 4.2 2.2.9-1.4 2.5-2.2 4.2-2.2 2.9 0 5.2 2.3 5.2 5.2 0 4.7-4.7 8.6-8.6 11.6-.2.2-.5.3-.8.3z" stroke="#e8b98a" stroke-width="1.4" stroke-linejoin="round"/>
+          </svg>
+        </div>
         <h3>طيبتكِ</h3>
         <p>قلبك طيب لدرجة تخلي المكتوب يترسم وأحس روحي صح محظوظ بيك.</p>
       </div>
       <div class="trait-card reveal tilt">
-        <div class="gem-stage"><div class="gem c3"></div></div>
+        <div class="icon-stage">
+          <svg class="trait-icon" viewBox="0 0 34 34" fill="none">
+            <path d="M17 6.5l2.6 6.7 7 .5-5.4 4.6 1.8 6.9L17 21.2l-6 4 1.8-6.9-5.4-4.6 7-.5z" stroke="#8aa0f0" stroke-width="1.3" stroke-linejoin="round"/>
+          </svg>
+        </div>
         <h3>حضوركِ</h3>
         <p>حتى لوكان بعيدة، وجودك في حياتي داير فارق كبير وباهي.</p>
       </div>
       <div class="trait-card reveal tilt">
-        <div class="gem-stage"><div class="gem c4"></div></div>
+        <div class="icon-stage">
+          <svg class="trait-icon" viewBox="0 0 34 34" fill="none">
+            <path d="M21.5 8c-1.3-.6-2.9-1-4.5-1-5.5 0-10 4.5-10 10s4.5 10 10 10c1.6 0 3.2-.4 4.5-1-3.7-.9-6.5-4.3-6.5-8.5s2.8-8.5 6.5-9.5z" stroke="#e8b98a" stroke-width="1.4" stroke-linejoin="round"/>
+          </svg>
+        </div>
         <h3>صبركِ</h3>
         <p>صبرك عليا وعلى المسافة حاجة عمري ما نساها ليك.</p>
       </div>
@@ -326,7 +377,22 @@
   }
   dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos,3));
   const dustMat = new THREE.PointsMaterial({color:0x8aa0f0, size:0.09, transparent:true, opacity:0.5, sizeAttenuation:true});
-  scene.add(new THREE.Points(dustGeo, dustMat));
+  const dustFar = new THREE.Points(dustGeo, dustMat);
+  scene.add(dustFar);
+
+  // Closer, sparser layer drifting the opposite way for real parallax depth
+  const nearCount = 140;
+  const nearGeo = new THREE.BufferGeometry();
+  const nearPos = new Float32Array(nearCount*3);
+  for(let i=0;i<nearCount;i++){
+    nearPos[i*3]   = (Math.random()-0.5)*36;
+    nearPos[i*3+1] = (Math.random()-0.5)*24;
+    nearPos[i*3+2] = 6 + Math.random()*6;
+  }
+  nearGeo.setAttribute('position', new THREE.BufferAttribute(nearPos,3));
+  const nearMat = new THREE.PointsMaterial({color:0xe8b98a, size:0.05, transparent:true, opacity:0.4, sizeAttenuation:true, blending:THREE.AdditiveBlending, depthWrite:false});
+  const dustNear = new THREE.Points(nearGeo, nearMat);
+  scene.add(dustNear);
 
   const N = 1500;
   const group = new THREE.Group();
@@ -366,7 +432,10 @@
   }
 
   function makeWordPositions(count, callback){
-    const cw = 900, ch = 300;
+    // Supersampled at 3x so small isolated glyph features (like the dot
+    // under ن) are never thin enough to fall between sample points.
+    const scale = 3;
+    const cw = 900*scale, ch = 300*scale;
     const off = document.createElement('canvas');
     off.width = cw; off.height = ch;
     const ctx = off.getContext('2d');
@@ -374,44 +443,97 @@
     function draw(){
       ctx.clearRect(0,0,cw,ch);
       ctx.fillStyle = '#fff';
-      ctx.font = '220px Rakkas';
+      ctx.font = `${220*scale}px Rakkas`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.direction = 'rtl';
-      ctx.fillText('حنين', cw/2, ch/2 + 10);
+      ctx.fillText('حنين', cw/2, ch/2 + 10*scale);
 
       const img = ctx.getImageData(0,0,cw,ch).data;
-      const raw = [];
-      const gap = 4;
-      for(let y=0;y<ch;y+=gap){
-        for(let x=0;x<cw;x+=gap){
-          const alpha = img[(y*cw+x)*4+3];
-          if(alpha > 120){
-            raw.push({x, y});
-          }
+      const gap = 2*scale;
+
+      // Flood-fill connected components so every distinct glyph shape,
+      // however small, is guaranteed its own share of particles instead
+      // of being drowned out by the larger strokes around it.
+      const cols = Math.ceil(cw/gap), rows = Math.ceil(ch/gap);
+      const cellAlpha = new Uint8Array(cols*rows);
+      for(let ry=0; ry<rows; ry++){
+        for(let rx=0; rx<cols; rx++){
+          const x = Math.min(cw-1, rx*gap), y = Math.min(ch-1, ry*gap);
+          cellAlpha[ry*cols+rx] = img[(y*cw+x)*4+3] > 100 ? 1 : 0;
         }
       }
-      // shuffle
-      for(let i=raw.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [raw[i],raw[j]] = [raw[j],raw[i]];
+      const visited = new Uint8Array(cols*rows);
+      const components = [];
+      for(let ry=0; ry<rows; ry++){
+        for(let rx=0; rx<cols; rx++){
+          const idx = ry*cols+rx;
+          if(!cellAlpha[idx] || visited[idx]) continue;
+          const stack = [idx];
+          visited[idx] = 1;
+          const cells = [];
+          while(stack.length){
+            const cur = stack.pop();
+            cells.push(cur);
+            const cx = cur % cols, cy = (cur/cols)|0;
+            const neighbors = [[cx+1,cy],[cx-1,cy],[cx,cy+1],[cx,cy-1],[cx+1,cy+1],[cx-1,cy-1],[cx+1,cy-1],[cx-1,cy+1]];
+            for(const [nx,ny] of neighbors){
+              if(nx<0||ny<0||nx>=cols||ny>=rows) continue;
+              const nIdx = ny*cols+nx;
+              if(cellAlpha[nIdx] && !visited[nIdx]){
+                visited[nIdx] = 1;
+                stack.push(nIdx);
+              }
+            }
+          }
+          components.push(cells);
+        }
       }
+
+      // Distribute the particle budget across components proportional
+      // to size, but with a guaranteed minimum per component so tiny
+      // dots (a handful of cells) still get rendered clearly.
+      const totalCells = components.reduce((s,c)=>s+c.length, 0) || 1;
+      const minPer = Math.max(6, Math.floor(count*0.01));
+      let remaining = count;
+      const perComponent = components.map(c=>{
+        const share = Math.max(minPer, Math.round(count * (c.length/totalCells)));
+        return Math.min(share, count);
+      });
       const arr = new Float32Array(count*3);
-      for(let i=0;i<count;i++){
-        const p = raw.length ? raw[i % raw.length] : {x:cw/2,y:ch/2};
-        const jitterX = raw.length ? (Math.random()-0.5)*2 : 0;
-        const jitterY = raw.length ? (Math.random()-0.5)*2 : 0;
-        const px = p.x + jitterX;
-        const py = p.y + jitterY;
-        arr[i*3]   = (px - cw/2) * 0.028;
-        arr[i*3+1] = -(py - ch/2) * 0.028;
-        arr[i*3+2] = (Math.random()-0.5)*0.6;
+      let w = 0;
+      components.forEach((cells, ci)=>{
+        let n = perComponent[ci];
+        if(w + n > count) n = count - w;
+        for(let i=0;i<n && w<count;i++,w++){
+          const cell = cells[Math.floor(Math.random()*cells.length)];
+          const cx = cell % cols, cy = (cell/cols)|0;
+          const px = cx*gap + (Math.random()-0.5)*gap;
+          const py = cy*gap + (Math.random()-0.5)*gap;
+          arr[w*3]   = (px - cw/2) * (0.028/scale);
+          arr[w*3+1] = -(py - ch/2) * (0.028/scale);
+          arr[w*3+2] = (Math.random()-0.5)*0.6;
+        }
+      });
+      // Fill any leftover budget (rounding slack) by resampling the
+      // largest component so nothing is left at the origin.
+      if(w < count && components.length){
+        const biggest = components.reduce((a,b)=>a.length>b.length?a:b);
+        for(; w<count; w++){
+          const cell = biggest[Math.floor(Math.random()*biggest.length)];
+          const cx = cell % cols, cy = (cell/cols)|0;
+          const px = cx*gap + (Math.random()-0.5)*gap;
+          const py = cy*gap + (Math.random()-0.5)*gap;
+          arr[w*3]   = (px - cw/2) * (0.028/scale);
+          arr[w*3+1] = -(py - ch/2) * (0.028/scale);
+          arr[w*3+2] = (Math.random()-0.5)*0.6;
+        }
       }
       callback(arr);
     }
 
     if(document.fonts && document.fonts.load){
-      document.fonts.load('400 220px "Rakkas"').then(draw).catch(draw);
+      document.fonts.load(`400 ${220*scale}px "Rakkas"`).then(draw).catch(draw);
     } else {
       draw();
     }
@@ -424,9 +546,48 @@
   const geometry = new THREE.BufferGeometry();
   const positions = starPositions.slice();
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const material = new THREE.PointsMaterial({
-    color:0xf4f6ff, size:0.075, transparent:true, opacity:0.95,
-    sizeAttenuation:true, blending:THREE.AdditiveBlending, depthWrite:false
+
+  // Per-star randomness so twinkle + size never feel uniform/mechanical
+  const seeds = new Float32Array(N);
+  const sizes = new Float32Array(N);
+  for(let i=0;i<N;i++){
+    seeds[i] = Math.random()*Math.PI*2;
+    sizes[i] = 0.055 + Math.random()*0.09;
+  }
+  geometry.setAttribute('aSeed', new THREE.BufferAttribute(seeds,1));
+  geometry.setAttribute('aSize', new THREE.BufferAttribute(sizes,1));
+
+  const material = new THREE.ShaderMaterial({
+    uniforms:{ uTime:{value:0}, uPixelRatio:{value:Math.min(window.devicePixelRatio,2)} },
+    transparent:true,
+    depthWrite:false,
+    blending:THREE.AdditiveBlending,
+    vertexShader:`
+      attribute float aSeed;
+      attribute float aSize;
+      uniform float uTime;
+      uniform float uPixelRatio;
+      varying float vTwinkle;
+      void main(){
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        float twinkle = 0.55 + 0.45 * sin(uTime*1.6 + aSeed*6.2831);
+        vTwinkle = twinkle;
+        gl_PointSize = aSize * uPixelRatio * (260.0 / -mvPosition.z) * (0.75 + 0.4*twinkle);
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `,
+    fragmentShader:`
+      varying float vTwinkle;
+      void main(){
+        vec2 uv = gl_PointCoord - 0.5;
+        float d = length(uv);
+        float core = smoothstep(0.5, 0.0, d);
+        float glow = smoothstep(0.5, 0.15, d) * 0.6;
+        float alpha = clamp(core + glow, 0.0, 1.0) * (0.55 + 0.45*vTwinkle);
+        vec3 color = mix(vec3(0.54,0.63,0.94), vec3(0.96,0.97,1.0), core);
+        gl_FragColor = vec4(color, alpha);
+      }
+    `
   });
   const points = new THREE.Points(geometry, material);
   group.add(points);
@@ -470,20 +631,30 @@
     const dt = clock.getDelta();
     const t = clock.getElapsedTime();
 
+    material.uniforms.uTime.value = t;
+
     if(!reduced){
       timer += dt*1000;
       if(timer > HOLD){
         timer = 0;
         stateIndex = (stateIndex+1) % states.length;
       }
+      // ease-in-out the morph speed across the hold window so shapes
+      // glide to rest instead of crawling at a constant linear rate
+      const progress = Math.min(timer/HOLD, 1);
+      const eased = progress < 0.5 ? 2*progress*progress : 1-Math.pow(-2*progress+2,2)/2;
+      const lerp = 0.02 + 0.05*Math.sin(eased*Math.PI);
       const target = currentTargetArray();
-      const lerp = 0.045;
       for(let i=0;i<N*3;i++){
         posAttr.array[i] += (target[i]-posAttr.array[i])*lerp;
       }
       posAttr.needsUpdate = true;
 
       group.rotation.y += 0.0009;
+      dustFar.rotation.y += 0.00035;
+      dustNear.rotation.y -= 0.0007;
+      dustNear.position.x = curX*-1.6;
+      dustNear.position.y = -curY*1.1;
 
       curX += (targetX-curX)*0.04;
       curY += (targetY-curY)*0.04;
