@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>بين النجوم — لحنين</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rakkas&family=Tajawal:wght@300;400;500;700&family=Cairo:wght@300;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#05070f;
+    --indigo-900:#0a1128;
+    --indigo-800:#111a3a;
+    --periwinkle:#8aa0f0;
+    --periwinkle-dim:#5b6aa8;
+    --starlight:#f4f6ff;
+    --muted:#7684ac;
+    --ember:#e8b98a;
+    --glass:rgba(138,160,240,0.05);
+    --hair:rgba(138,160,240,0.16);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--starlight);
+    font-family:'Tajawal',sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+  }
+  .display{font-family:'Rakkas',serif;}
+  .eyebrow{
+    font-family:'Cairo',sans-serif;
+    font-weight:500;
+    letter-spacing:.2em;
+    color:var(--periwinkle);
+    font-size:.78rem;
+    opacity:.85;
+    display:inline-block;
+  }
+  section{position:relative;width:100%;z-index:1;}
+
+  /* ---------- GLOBAL AMBIENT LAYERS ---------- */
+  #bg-canvas{
+    position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:-2;
+  }
+  .vignette{
+    position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.5) 100%);
+  }
+  .cursor-glow{
+    position:fixed;top:0;left:0;width:360px;height:360px;border-radius:50%;
+    background:radial-gradient(circle, rgba(138,160,240,.16), transparent 70%);
+    pointer-events:none;z-index:3;mix-blend-mode:screen;
+    transform:translate(-999px,-999px);
+    transition:transform .25s ease-out, opacity .4s ease;
+    opacity:0;
+  }
+  .shooting-star{
+    position:fixed;width:2px;height:2px;border-radius:50%;
+    background:#fff;box-shadow:0 0 6px 1px rgba(255,255,255,.9);
+    z-index:-1;pointer-events:none;
+    animation:shoot 1.3s linear forwards;
+  }
+  .shooting-star::before{
+    content:'';position:absolute;top:50%;right:0;width:90px;height:1px;
+    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.75));
+    transform:translateY(-50%);
+  }
+  @keyframes shoot{
+    0%{transform:translate(0,0);opacity:1;}
+    100%{transform:translate(-260px,190px);opacity:0;}
+  }
+
+  /* ---------- SCROLL REVEAL ---------- */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .85s ease, transform .85s ease;}
+  .reveal.in-view{opacity:1;transform:none;}
+  .trait-card.reveal:nth-child(1){transition-delay:.05s;}
+  .trait-card.reveal:nth-child(2){transition-delay:.15s;}
+  .trait-card.reveal:nth-child(3){transition-delay:.25s;}
+  .trait-card.reveal:nth-child(4){transition-delay:.35s;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    height:100svh;
+    min-height:600px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  .hero-veil{
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse at 50% 40%, rgba(5,7,15,0) 0%, rgba(5,7,15,.35) 65%, rgba(5,7,15,.75) 100%);
+    pointer-events:none;
+  }
+  .hero-content{
+    position:relative;z-index:2;text-align:center;padding:0 1.5rem;max-width:640px;
+    margin-top:auto;
+  }
+  .hero .eyebrow{margin-bottom:.9rem;}
+  .hero h1{
+    font-size:clamp(1.7rem,4.4vw,2.6rem);
+    line-height:1.5;
+    color:var(--starlight);
+    margin-bottom:.9rem;
+  }
+  .hero p{
+    font-size:clamp(.95rem,1.8vw,1.05rem);
+    color:var(--muted);
+    max-width:420px;
+    margin:0 auto;
+    line-height:1.9;
+  }
+  .scroll-link{
+    margin:2.2rem auto 3.2rem;
+    display:inline-flex;align-items:center;gap:.5rem;
+    color:var(--periwinkle);
+    text-decoration:none;
+    font-family:'Cairo',sans-serif;
+    font-size:.9rem;
+    position:relative;
+    z-index:2;
+    padding-bottom:3px;
+    border-bottom:1px solid var(--hair);
+    transition:border-color .3s ease, letter-spacing .3s ease;
+  }
+  .scroll-link:hover{border-color:var(--periwinkle); letter-spacing:.02em;}
+  .scroll-link svg{width:13px;height:13px;animation:bob 1.8s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+  /* ---------- SHARED WRAP ---------- */
+  .wrap{max-width:960px;margin:0 auto;padding:6.5rem 1.5rem;}
+
+  /* ---------- LETTER ---------- */
+  .letter-section{background:linear-gradient(180deg, rgba(5,7,15,.88) 0%, rgba(10,17,40,.93) 100%);}
+  .letter-grid{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    gap:3rem;
+    align-items:start;
+  }
+  .chart-box{
+    border:1px solid var(--hair);
+    border-radius:16px;
+    padding:1.6rem 1.2rem;
+    background:var(--glass);
+  }
+  .chart-box svg{width:100%;height:auto;display:block;margin-bottom:1rem;}
+  .chart-label{font-family:'Cairo',sans-serif;font-size:.75rem;color:var(--muted);line-height:1.8;text-align:center;}
+  .chart-label b{color:var(--periwinkle);font-weight:500;}
+  .letter-card h2{
+    font-family:'Rakkas',serif;
+    font-size:clamp(1.7rem,3.4vw,2.3rem);
+    color:var(--starlight);
+    margin-bottom:1.6rem;
+  }
+  .letter-card p{
+    font-size:clamp(1rem,1.6vw,1.12rem);
+    line-height:2.1;
+    color:#dbe1f7;
+    margin-bottom:1.25rem;
+  }
+  .letter-sign{
+    margin-top:1.8rem;
+    font-family:'Rakkas',serif;
+    font-size:1.3rem;
+    color:var(--periwinkle);
+  }
+  @media (max-width:720px){
+    .letter-grid{grid-template-columns:1fr;}
+    .chart-box{max-width:220px;margin:0 auto;}
+  }
+
+  /* ---------- TRAITS (GEMS) ---------- */
+  .traits-section{background:rgba(10,17,40,.94);}
+  .traits-section .head{text-align:center;margin-bottom:3.4rem;}
+  .traits-section h2{font-family:'Rakkas',serif;color:var(--starlight);font-size:clamp(1.6rem,3.2vw,2.1rem);margin-top:.5rem;}
+  .traits-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:1.4rem;
+  }
+  .trait-card{
+    border:1px solid var(--hair);
+    border-radius:16px;
+    padding:2.4rem 1.3rem 1.8rem;
+    text-align:center;
+    background:var(--glass);
+    display:flex;flex-direction:column;align-items:center;gap:1.2rem;
+  }
+  .trait-card h3{font-family:'Cairo',sans-serif;font-weight:500;font-size:1.02rem;color:var(--starlight);}
+  .trait-card p{font-size:.9rem;color:var(--muted);line-height:1.9;}
+  .gem-stage{width:64px;height:64px;perspective:300px;display:flex;align-items:center;justify-content:center;}
+  .gem{
+    width:38px;height:38px;
+    clip-path:polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+    transform-style:preserve-3d;
+    animation:gemspin 7s ease-in-out infinite;
+  }
+  @keyframes gemspin{
+    0%,100%{transform:rotateY(-18deg) rotateX(8deg);}
+    50%{transform:rotateY(18deg) rotateX(-6deg);}
+  }
+  .gem.c1{background:linear-gradient(160deg,#c9d5ff 0%, var(--periwinkle) 55%, #3d4a8f 100%);}
+  .gem.c2{background:linear-gradient(160deg,#ffe6c9 0%, var(--ember) 55%, #8a5f34 100%);}
+  .gem.c3{background:linear-gradient(160deg,#d7ffe9 0%, #7fd6a8 55%, #33684a 100%);}
+  .gem.c4{background:linear-gradient(160deg,#ffd7ec 0%, #d68fc0 55%, #6b3a5b 100%);}
+
+  /* ---------- COUNTDOWN / ORBIT ---------- */
+  .countdown-section{background:linear-gradient(180deg, rgba(10,17,40,.92) 0%, rgba(5,7,15,.9) 100%);text-align:center;}
+  .countdown-section h2{font-family:'Rakkas',serif;color:var(--starlight);font-size:clamp(1.5rem,3.2vw,2rem);margin:.6rem 0 .6rem;}
+  .age-line{color:var(--muted);margin-bottom:2.8rem;font-size:.95rem;}
+  .age-line b{color:var(--ember);font-weight:500;}
+  .orbit-wrap{display:flex;justify-content:center;margin-bottom:2.2rem;}
+  .orbit-ring{
+    --p:0;
+    position:relative;width:230px;height:230px;border-radius:50%;
+    border:1px solid var(--hair);
+  }
+  .orbit-ring::before{
+    content:'';position:absolute;inset:0;border-radius:50%;
+    background:conic-gradient(from -90deg, var(--ember) calc(var(--p)*1%), rgba(138,160,240,.08) 0);
+    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 7px));
+    mask:radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 7px));
+  }
+  .orbit-ring::after{
+    content:'';position:absolute;inset:-16px;border-radius:50%;
+    border:1px dashed rgba(138,160,240,.18);
+    animation:spin-slow 50s linear infinite;
+  }
+  @keyframes spin-slow{to{transform:rotate(360deg);}}
+  .orbit-marker{
+    position:absolute;top:50%;left:50%;width:11px;height:11px;margin:-5.5px;border-radius:50%;
+    background:var(--ember);box-shadow:0 0 12px var(--ember);
+    transform-origin:5.5px 5.5px;
+    animation:pulse-glow 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-glow{
+    0%,100%{box-shadow:0 0 10px var(--ember);}
+    50%{box-shadow:0 0 22px var(--ember);}
+  }
+  .orbit-center{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .orbit-center .num{font-family:'Rakkas',serif;font-size:2.6rem;color:var(--starlight);line-height:1;}
+  .orbit-center .lbl{font-family:'Cairo',sans-serif;font-size:.78rem;color:var(--muted);margin-top:.4rem;}
+  .sub-row{
+    display:flex;justify-content:center;gap:1.8rem;
+    font-family:'Cairo',sans-serif;color:var(--muted);font-size:.85rem;
+  }
+  .sub-row b{color:var(--periwinkle);font-weight:500;font-size:1rem;}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:rgba(5,7,15,.95);text-align:center;padding:4.2rem 1.5rem 3.6rem;}
+  footer .sig{font-family:'Rakkas',serif;font-size:1.35rem;color:var(--starlight);margin-bottom:.4rem;}
+  footer .small{color:var(--muted);font-size:.8rem;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="vignette"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<section class="hero">
+  <div class="hero-veil"></div>
+  <div class="hero-content">
+    <span class="eyebrow">١٠ مارس</span>
+    <h1>بين النجوم، اسمكِ مكتوب</h1>
+    <p>قصة صغيرة بدأت صدفة، وصارت أجمل شي عندي.</p>
+  </div>
+  <a href="#letter" class="scroll-link">
+    اقرأي رسالتي
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </a>
+</section>
+
+<section class="letter-section" id="letter">
+  <div class="wrap">
+    <div class="letter-grid">
+      <div class="chart-box reveal tilt">
+        <svg viewBox="0 0 200 160">
+          <line x1="30" y1="40" x2="170" y2="120" stroke="#8aa0f0" stroke-width="1" stroke-dasharray="3 4" opacity="0.5"/>
+          <circle cx="30" cy="40" r="4" fill="#e8b98a"/>
+          <circle cx="170" cy="120" r="4" fill="#8aa0f0"/>
+          <text x="30" y="26" fill="#7684ac" font-size="11" text-anchor="middle" font-family="Cairo">غرداية</text>
+          <text x="170" y="140" fill="#7684ac" font-size="11" text-anchor="middle" font-family="Cairo">أبها</text>
+        </svg>
+        <p class="chart-label">المسافة بينكم<br><b>نحو ٤٬٢٠٠ كم</b><br>ولا شي منها يقارن بالشوق</p>
+      </div>
+      <div class="letter-card reveal tilt">
+        <span class="eyebrow">رسالة</span>
+        <h2 style="margin-top:.6rem;">يا حنين</h2>
+        <p>كل سنة يمر فيها العاشر من مارس، أحسّه يوم مختلف عن باقي الأيام؛ لأنّ في هذا التاريخ وُلدتِ أنتِ، وصار للدنيا معنى زايد.</p>
+        <p>تعرّفنا صدفة، من قلب لعبة صغيرة ما كنت أتخيل إنها راح توصلني لإنسانة بهالطيبة والصفاء. من يومها وأنا أحس إن الدنيا صارت أحلى بوجودكِ فيها.</p>
+        <p>يا حنين، أتمنى عيدك يجيب لك كل اللي تتمنينه، ويخليكِ دايم بهالطيبة اللي أحبها فيكِ. وحتى لو المسافة بين الجزائر والسعودية طويلة، أعرف إن قلبك قريب مني زي ما قلبي قريب منكِ.</p>
+        <p>كل عام وإنتِ بخير، يا أغلى إنسانة عرفتها حياتي.</p>
+        <p class="letter-sign">من قلب عبدو، يحبك من بعيد<br>عبدو</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="traits-section">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">أشياء أحبها فيكِ</span>
+      <h2>حنين اللي أعرفها</h2>
+    </div>
+    <div class="traits-grid">
+      <div class="trait-card reveal tilt">
+        <div class="gem-stage"><div class="gem c1"></div></div>
+        <h3>ضحكتها</h3>
+        <p>تكفي ثانية وحدة من ضحكتك عشان يومي يتغير كله.</p>
+      </div>
+      <div class="trait-card reveal tilt">
+        <div class="gem-stage"><div class="gem c2"></div></div>
+        <h3>طيبتها</h3>
+        <p>قلبك طيب لدرجة إنه يخليني أحس إني محظوظ فعلاً.</p>
+      </div>
+      <div class="trait-card reveal tilt">
+        <div class="gem-stage"><div class="gem c3"></div></div>
+        <h3>حضورها</h3>
+        <p>حتى من بعيد، وجودكِ في حياتي فرق كبير.</p>
+      </div>
+      <div class="trait-card reveal tilt">
+        <div class="gem-stage"><div class="gem c4"></div></div>
+        <h3>صبرها</h3>
+        <p>صبرك عليّ وعلى المسافة شي ما راح أنساه.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="countdown-section">
+  <div class="wrap">
+    <span class="eyebrow">العد التنازلي</span>
+    <h2>لعيد ميلادكِ القادم</h2>
+    <p class="age-line">وُلدتِ في <b>١٠ مارس ٢٠٠٥</b> — واليوم عمركِ <b id="ageNow">--</b> سنة</p>
+    <div class="orbit-wrap reveal">
+      <div class="orbit-ring" id="orbitRing">
+        <div class="orbit-marker" id="orbitMarker"></div>
+        <div class="orbit-center">
+          <span class="num" id="cd-days">--</span>
+          <span class="lbl">يوم متبقي</span>
+        </div>
+      </div>
+    </div>
+    <div class="sub-row reveal">
+      <span><b id="cd-hours">--</b> ساعة</span>
+      <span><b id="cd-min">--</b> دقيقة</span>
+      <span><b id="cd-sec">--</b> ثانية</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p class="sig reveal">لِحنين، من عبدو</p>
+  <p class="small">صُنع بحب — ١٠ مارس</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ================= PARTICLE CONSTELLATION ================= */
+(function(){
+  const canvas = document.getElementById('bg-canvas');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 200);
+  camera.position.set(0, 0, 18);
+
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x05070f, 1);
+
+  // distant ambient stars
+  const dustCount = 500;
+  const dustGeo = new THREE.BufferGeometry();
+  const dustPos = new Float32Array(dustCount*3);
+  for(let i=0;i<dustCount;i++){
+    dustPos[i*3]   = (Math.random()-0.5)*70;
+    dustPos[i*3+1] = (Math.random()-0.5)*45;
+    dustPos[i*3+2] = -20 - Math.random()*40;
+  }
+  dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos,3));
+  const dustMat = new THREE.PointsMaterial({color:0x8aa0f0, size:0.09, transparent:true, opacity:0.5, sizeAttenuation:true});
+  scene.add(new THREE.Points(dustGeo, dustMat));
+
+  const N = 1500;
+  const group = new THREE.Group();
+  scene.add(group);
+
+  function makeStarPositions(count){
+    const arr = new Float32Array(count*3);
+    for(let i=0;i<count;i++){
+      const r = 6 + Math.random()*7;
+      const theta = Math.random()*Math.PI*2;
+      const phi = Math.acos((Math.random()*2)-1);
+      arr[i*3]   = r*Math.sin(phi)*Math.cos(theta);
+      arr[i*3+1] = r*Math.sin(phi)*Math.sin(theta)*0.6;
+      arr[i*3+2] = r*Math.cos(phi)*0.6 - 2;
+    }
+    return arr;
+  }
+
+  function makeHeartPositions(count){
+    const arr = new Float32Array(count*3);
+    let i = 0;
+    let guard = 0;
+    while(i < count && guard < count*400){
+      guard++;
+      const x = (Math.random()*2.6-1.3);
+      const y = (Math.random()*2.3-1.0);
+      const a = x*x + y*y - 1;
+      if(a*a*a - x*x*y*y*y <= 0){
+        arr[i*3]   = x*3.1;
+        arr[i*3+1] = y*3.1;
+        arr[i*3+2] = (Math.random()-0.5)*1.2;
+        i++;
+      }
+    }
+    while(i < count){ arr[i*3]=0; arr[i*3+1]=0; arr[i*3+2]=0; i++; }
+    return arr;
+  }
+
+  function makeWordPositions(count, callback){
+    const cw = 900, ch = 300;
+    const off = document.createElement('canvas');
+    off.width = cw; off.height = ch;
+    const ctx = off.getContext('2d');
+
+    function draw(){
+      ctx.clearRect(0,0,cw,ch);
+      ctx.fillStyle = '#fff';
+      ctx.font = '220px Rakkas';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.direction = 'rtl';
+      ctx.fillText('حنين', cw/2, ch/2 + 10);
+
+      const img = ctx.getImageData(0,0,cw,ch).data;
+      const raw = [];
+      const gap = 4;
+      for(let y=0;y<ch;y+=gap){
+        for(let x=0;x<cw;x+=gap){
+          const alpha = img[(y*cw+x)*4+3];
+          if(alpha > 120){
+            raw.push({x, y});
+          }
+        }
+      }
+      // shuffle
+      for(let i=raw.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [raw[i],raw[j]] = [raw[j],raw[i]];
+      }
+      const arr = new Float32Array(count*3);
+      for(let i=0;i<count;i++){
+        const p = raw.length ? raw[i % raw.length] : {x:cw/2,y:ch/2};
+        const jitterX = raw.length ? (Math.random()-0.5)*2 : 0;
+        const jitterY = raw.length ? (Math.random()-0.5)*2 : 0;
+        const px = p.x + jitterX;
+        const py = p.y + jitterY;
+        arr[i*3]   = (px - cw/2) * 0.028;
+        arr[i*3+1] = -(py - ch/2) * 0.028;
+        arr[i*3+2] = (Math.random()-0.5)*0.6;
+      }
+      callback(arr);
+    }
+
+    if(document.fonts && document.fonts.load){
+      document.fonts.load('400 220px "Rakkas"').then(draw).catch(draw);
+    } else {
+      draw();
+    }
+  }
+
+  const starPositions = makeStarPositions(N);
+  const heartPositions = makeHeartPositions(N);
+  let wordPositions = starPositions.slice();
+
+  const geometry = new THREE.BufferGeometry();
+  const positions = starPositions.slice();
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const material = new THREE.PointsMaterial({
+    color:0xf4f6ff, size:0.075, transparent:true, opacity:0.95,
+    sizeAttenuation:true, blending:THREE.AdditiveBlending, depthWrite:false
+  });
+  const points = new THREE.Points(geometry, material);
+  group.add(points);
+
+  makeWordPositions(N, (arr)=>{ wordPositions = arr; });
+
+  function resize(){
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+  window.addEventListener('resize', resize);
+
+  let targetX=0, targetY=0, curX=0, curY=0;
+  window.addEventListener('mousemove',(e)=>{
+    targetX = (e.clientX/window.innerWidth - 0.5);
+    targetY = (e.clientY/window.innerHeight - 0.5);
+  });
+  window.addEventListener('touchmove',(e)=>{
+    if(e.touches[0]){
+      targetX = (e.touches[0].clientX/window.innerWidth - 0.5);
+      targetY = (e.touches[0].clientY/window.innerHeight - 0.5);
+    }
+  }, {passive:true});
+
+  const states = ['star','word','heart'];
+  let stateIndex = reduced ? 1 : 0;
+  let timer = 0;
+  const HOLD = 4300;
+  const posAttr = geometry.attributes.position;
+  const clock = new THREE.Clock();
+
+  function currentTargetArray(){
+    if(states[stateIndex] === 'star') return starPositions;
+    if(states[stateIndex] === 'word') return wordPositions;
+    return heartPositions;
+  }
+
+  function animate(){
+    requestAnimationFrame(animate);
+    const dt = clock.getDelta();
+    const t = clock.getElapsedTime();
+
+    if(!reduced){
+      timer += dt*1000;
+      if(timer > HOLD){
+        timer = 0;
+        stateIndex = (stateIndex+1) % states.length;
+      }
+      const target = currentTargetArray();
+      const lerp = 0.045;
+      for(let i=0;i<N*3;i++){
+        posAttr.array[i] += (target[i]-posAttr.array[i])*lerp;
+      }
+      posAttr.needsUpdate = true;
+
+      group.rotation.y += 0.0009;
+
+      curX += (targetX-curX)*0.04;
+      curY += (targetY-curY)*0.04;
+      camera.position.x = curX*2.2;
+      camera.position.y = -curY*1.4;
+      camera.lookAt(0,0,0);
+    } else {
+      if(posAttr.array[0] === starPositions[0]){
+        posAttr.array.set(wordPositions);
+        posAttr.needsUpdate = true;
+      }
+    }
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+/* ================= TILT (letter card, chart, trait cards) ================= */
+(function(){
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced) return;
+  document.querySelectorAll('.tilt').forEach((card)=>{
+    card.addEventListener('mousemove', (e)=>{
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left)/r.width - 0.5;
+      const py = (e.clientY - r.top)/r.height - 0.5;
+      card.style.transform = `rotateX(${(-py*5).toFixed(2)}deg) rotateY(${(px*5).toFixed(2)}deg)`;
+    });
+    card.addEventListener('mouseleave', ()=>{ card.style.transform = ''; });
+  });
+})();
+
+/* ================= SCROLL REVEAL ================= */
+(function(){
+  const items = document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){
+    items.forEach(el=>el.classList.add('in-view'));
+    return;
+  }
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.2});
+  items.forEach(el=>obs.observe(el));
+})();
+
+/* ================= CURSOR GLOW ================= */
+(function(){
+  const glow = document.getElementById('cursorGlow');
+  if(!glow || window.matchMedia('(pointer: coarse)').matches) return;
+  window.addEventListener('mousemove', (e)=>{
+    glow.style.opacity = '1';
+    glow.style.transform = `translate(${e.clientX-180}px, ${e.clientY-180}px)`;
+  });
+  window.addEventListener('mouseleave', ()=>{ glow.style.opacity = '0'; });
+})();
+
+/* ================= SHOOTING STARS ================= */
+(function(){
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced) return;
+  function spawn(){
+    const el = document.createElement('div');
+    el.className = 'shooting-star';
+    el.style.top = (Math.random()*35)+'%';
+    el.style.left = (Math.random()*55+25)+'%';
+    document.body.appendChild(el);
+    el.addEventListener('animationend', ()=> el.remove());
+    setTimeout(spawn, 5000 + Math.random()*6000);
+  }
+  setTimeout(spawn, 3000);
+})();
+
+/* ================= AGE + COUNTDOWN + ORBIT ================= */
+(function(){
+  const birth = new Date(2005, 2, 10);
+  const toAr = (n) => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+
+  function calcAge(now){
+    let age = now.getFullYear() - birth.getFullYear();
+    const had = (now.getMonth() > birth.getMonth()) || (now.getMonth() === birth.getMonth() && now.getDate() >= birth.getDate());
+    if(!had) age--;
+    return age;
+  }
+  function lastBirthday(now){
+    let d = new Date(now.getFullYear(), 2, 10);
+    if(d.getTime() > now.getTime()) d = new Date(now.getFullYear()-1, 2, 10);
+    return d;
+  }
+  function nextBirthday(now){
+    let d = new Date(now.getFullYear(), 2, 10);
+    if(d.getTime() <= now.getTime()) d = new Date(now.getFullYear()+1, 2, 10);
+    return d;
+  }
+
+  const marker = document.getElementById('orbitMarker');
+  const ring = document.getElementById('orbitRing');
+
+  function tick(){
+    const now = new Date();
+    document.getElementById('ageNow').textContent = toAr(calcAge(now));
+
+    const prev = lastBirthday(now);
+    const next = nextBirthday(now);
+    const total = next.getTime() - prev.getTime();
+    const elapsed = now.getTime() - prev.getTime();
+    const fraction = Math.min(1, Math.max(0, elapsed/total));
+
+    ring.style.setProperty('--p', (fraction*100).toFixed(2));
+    const angle = fraction*360 - 90;
+    marker.style.transform = `rotate(${angle}deg) translate(108px) rotate(${-angle}deg)`;
+
+    const diff = Math.max(0, next.getTime()-now.getTime());
+    const days = Math.floor(diff/(1000*60*60*24));
+    const hours = Math.floor((diff/(1000*60*60))%24);
+    const mins = Math.floor((diff/(1000*60))%60);
+    const secs = Math.floor((diff/1000)%60);
+
+    document.getElementById('cd-days').textContent = toAr(days);
+    document.getElementById('cd-hours').textContent = toAr(String(hours).padStart(2,'0'));
+    document.getElementById('cd-min').textContent = toAr(String(mins).padStart(2,'0'));
+    document.getElementById('cd-sec').textContent = toAr(String(secs).padStart(2,'0'));
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>
